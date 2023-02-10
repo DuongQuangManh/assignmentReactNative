@@ -6,21 +6,6 @@ import FormInput from "../../FormInput";
 const ChangePass = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={{
-            width: 40,
-            height: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <Ionicons name="chevron-back" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
       <View style={styles.body}>
         <FormInput placeholder="Mật khẩu hiện tại" icon="clock-o" />
         <FormInput placeholder="Mật khẩu mới" icon="key" />
@@ -59,11 +44,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "ios" ? "10%" : 0,
     backgroundColor: colors.background,
-  },
-  header: {
-    width: "100%",
-    height: "8%",
-    backgroundColor: "white",
   },
   body: {
     flex: 1,
