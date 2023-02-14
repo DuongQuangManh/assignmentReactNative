@@ -3,7 +3,7 @@ import colors from "../../../contains/colors";
 const styles = StyleSheet.create({
   header: {
     width: "100%",
-    height: 70,
+    height: 60,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   containercontent: {
     width: "100%",
     height: "100%",
-    paddingTop: 70,
+    paddingTop: 60,
     backgroundColor: colors.background,
   },
   label: {
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: 10,
     backgroundColor: "white",
-    marginTop: 10,
     marginBottom: 10,
   },
 });

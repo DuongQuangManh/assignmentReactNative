@@ -1,4 +1,4 @@
-var api_url = "http://192.168.1.14:3000/accounts";
+export var api_url = "http://10.24.11.18:3000/accounts";
 
 export function getUserByEmail(email) {
   return fetch(api_url + "?email=" + email, {
@@ -40,6 +40,23 @@ export function getUserByArrID(arr) {
       });
 
       return filteredPosts;
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+}
+export function getUserByName(name) {
+  return fetch(api_url + "?name_like=" + name, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (posts) {
+      return posts;
     })
     .catch(function (error) {
       console.error(error);

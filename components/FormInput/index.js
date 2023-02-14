@@ -8,10 +8,11 @@ const FormInput = (props) => {
       <TextInput
         style={styles.textinput}
         placeholder={props.placeholder}
-        secureTextEntry={props.placeholder === "PassWord" ? true : false}
+        secureTextEntry={props.password}
         onChangeText={(text) => {
           props.getText(text);
         }}
+        value={props.value}
       />
       <FontAwesome
         name={props.icon}

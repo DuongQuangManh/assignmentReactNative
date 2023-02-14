@@ -16,20 +16,26 @@ import ItemPost from "../../ItemPost";
 import { Ionicons } from "@expo/vector-icons";
 import ItemInfo from "../../ItemInfo";
 import { Entypo } from "@expo/vector-icons";
-import styles from "./style";
+
 var user = {
+  image:
+    "https://static2.yan.vn/YanNews/2167221/202102/facebook-cap-nhat-avatar-doi-voi-tai-khoan-khong-su-du",
+  background:
+    "https://img.meta.com.vn/Data/image/2022/02/07/mau-ghi-la-mau-gi-2.jpg",
   name: "",
   address: "",
   acmd: "",
   job: "",
   relastatus: "",
-  follower: [],
-  following: [],
 };
 var API = require("../../../src/requestAPI");
+const ScreenShowPage = ({ navigation, route }) => {
+  const idSearch = route.params.uIDSearch;
+  const idUser = route.params.uIDUser;
 
-const Page = ({ navigation, route }) => {
-  const userID = route.params.userID;
+  console.log("idSearch" + idSearch);
+  console.log("idUser" + idUser);
+
   const [acc, setAcc] = useState(user);
   const [refreshing, setRefreshing] = useState(false);
   const [follower, setFler] = useState([]);
@@ -38,16 +44,19 @@ const Page = ({ navigation, route }) => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getUser();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
   }, []);
 
   const handlerShowFollower = () => {
-    navigation.navigate("Danh sách", { uID: userID, type: "follower" });
+    navigation.navigate("Danh sách", { uID: idSearch, type: "follower" });
   };
   const handlerShowFollowing = () => {
-    navigation.navigate("Danh sách", { uID: userID, type: "following" });
+    navigation.navigate("Danh sách", { uID: idSearch, type: "following" });
   };
 
-  console.log("page: " + userID);
+  console.log("page: " + idSearch);
   const data = [
     { name: "abc" },
     { name: "abc" },
@@ -59,17 +68,13 @@ const Page = ({ navigation, route }) => {
   ];
 
   const getUser = async () => {
-    const a = await API.getUserByID(userID);
+    const a = await API.getUserByID(idSearch);
     setAcc(a);
     setFler(a.follower);
     setFling(a.following);
     console.log("đây là log acc" + a.follower.length);
-    setRefreshing(false);
   };
 
-  const handlerEditProfile = () => {
-    navigation.navigate("Chỉnh sửa trang cá nhân", { uID: userID });
-  };
   useEffect(() => {
     getUser();
   }, []);
@@ -121,6 +126,14 @@ const Page = ({ navigation, route }) => {
               </Text>
             </TouchableOpacity>
           </View>
+          {idUser === idSearch ? null : (
+            <TouchableOpacity>
+              <View style={styles.btnFl}>
+                {/* circle-with-minus */}
+                <ItemInfo icon="circle-with-plus" label="Theo dõi" content="" />
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
         <View style={styles.infodetail}>
           <Text style={styles.labelLarge}>Chi tiết</Text>
@@ -150,22 +163,25 @@ const Page = ({ navigation, route }) => {
             }
             content=""
           />
-          <TouchableOpacity onPress={handlerEditProfile}>
-            <View style={styles.btnEdit}>
-              <ItemInfo
-                icon="edit"
-                label="Chỉnh sửa trang cá nhân"
-                content=""
-              />
-            </View>
-          </TouchableOpacity>
         </View>
         <View style={styles.postandstatus}>
           <Hr />
           <Text style={styles.labelLarge}>Bài viết của bạn</Text>
           <TouchableOpacity>
             <View style={styles.poststatus}>
-              <Text>Bạn đang nghĩ gì</Text>
+              <Image
+                source={require("../../../assets/avt.png")}
+                style={{ width: 50, height: 50, borderRadius: 180 }}
+              />
+              <Text
+                style={{
+                  fontFamily: "Opensans",
+                  color: "gray",
+                  marginStart: 10,
+                }}
+              >
+                Bạn đang nghĩ gì
+              </Text>
             </View>
           </TouchableOpacity>
           <View
@@ -183,4 +199,106 @@ const Page = ({ navigation, route }) => {
   );
 };
 
-export default Page;
+export default ScreenShowPage;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingTop: Platform.OS === "ios" ? "10%" : 0,
+  },
+  header: {
+    width: "100%",
+    height: "8%",
+    flexDirection: "row",
+  },
+  btnBack: {
+    width: 50,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textHeader: {
+    alignSelf: "center",
+    fontFamily: "Opensans_Bold",
+    fontSize: 16,
+  },
+  img: {
+    width: "100%",
+    height: 250,
+    backgroundColor: "white",
+    position: "relative",
+  },
+  infodetail: {
+    width: "100%",
+    backgroundColor: "white",
+    padding: 10,
+    marginTop: 10,
+  },
+  background: {
+    width: "100%",
+    height: "85%",
+    backgroundColor: colors.background,
+    position: "absolute",
+    top: 0,
+  },
+  avatar: {
+    width: 150,
+    height: 150,
+    backgroundColor: colors.background,
+    position: "absolute",
+    bottom: 0,
+    left: 15,
+    borderRadius: 180,
+    borderColor: "white",
+    borderWidth: 5,
+  },
+  nameandfollower: {
+    width: "100%",
+    backgroundColor: "white",
+    padding: 10,
+  },
+  btnFl: {
+    width: "50%",
+    height: 40,
+    backgroundColor: "#e8f3ff",
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  postandstatus: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "white",
+    marginTop: 10,
+    padding: 10,
+  },
+  poststatus: {
+    width: "100%",
+    height: 70,
+    alignItems: "center",
+    paddingStart: 10,
+    flexDirection: "row",
+    borderRadius: 10,
+    backgroundColor: colors.background,
+    marginTop: 10,
+  },
+  labelLarge: {
+    fontFamily: "Opensans_Bold",
+    fontSize: 18,
+  },
+
+  containerFollow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textfl: {
+    fontFamily: "Opensans_Bold",
+    fontSize: 15,
+  },
+  textgray: {
+    fontFamily: "Opensans",
+    color: "gray",
+  },
+});

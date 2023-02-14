@@ -1,12 +1,18 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 
-const ItemListUser = ({ item }) => {
+const ItemListUser = ({ item, show }) => {
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.name}>{item.name}</Text>
-    </View>
+    <TouchableOpacity
+      onPress={() => {
+        show(item.id);
+      }}
+    >
+      <View style={styles.container}>
+        <Image source={{ uri: item.image }} style={styles.image} />
+        <Text style={styles.name}>{item.name}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 

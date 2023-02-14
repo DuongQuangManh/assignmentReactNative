@@ -12,7 +12,7 @@ import ItemPost from "../../ItemPost";
 import styles from "./style";
 import { Ionicons } from "@expo/vector-icons";
 
-const ScreenHome = () => {
+const ScreenHome = ({ stackNavigation, userID }) => {
   const data = [
     { name: "abc" },
     { name: "abc" },
@@ -34,6 +34,9 @@ const ScreenHome = () => {
     outputRange: [0, Platform.OS === "ios" ? -270 : -70],
   });
 
+  const handlerSearch = () => {
+    stackNavigation.navigate("ScreenSearch", { uID: userID });
+  };
   const renderFlat = () => {
     return data.map((item, index) => (
       <ItemPost iduser={item.name} idstatus={item.name} key={index} />
@@ -64,7 +67,7 @@ const ScreenHome = () => {
       >
         <View style={styles.header}>
           <Text style={styles.label}>MyBlog</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlerSearch}>
             <Ionicons name="search" size={24} color="black" />
           </TouchableOpacity>
         </View>

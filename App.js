@@ -21,6 +21,10 @@ import ChangePass from "./components/screen/ChangePass";
 import Infomation from "./components/screen/Infomation";
 import Page from "./components/screen/Page";
 import ScreenListUser from "./components/screen/ScreenListUser";
+import ScreenSearch from "./components/screen/ScreenSearch";
+import ScreenListUserSearch from "./components/screen/ScreenListUserSearch";
+import ScreenShowPage from "./components/screen/ScreenShowPage";
+import ScreenEditProfile from "./components/screen/ScreenEditProfile";
 export default function App() {
   const Stack = createNativeStackNavigator();
   const backAction = () => {
@@ -79,6 +83,26 @@ export default function App() {
           component={Page}
         />
         <Stack.Screen name="Danh sách" component={ScreenListUser} />
+        <Stack.Screen
+          name="ScreenSearch"
+          component={ScreenSearch}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ScreenListUserSearch"
+          component={ScreenListUserSearch}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ScreenShowPage"
+          component={ScreenShowPage}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Chỉnh sửa trang cá nhân"
+          component={ScreenEditProfile}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

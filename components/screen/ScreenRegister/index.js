@@ -16,7 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FormInput from "../../FormInput";
 import Loadding from "../../Loadding";
-var api_url = "http://192.168.1.14:3000/accounts";
+var api_url = require("../../../src/requestAPI").api_url;
 var emailreg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 var sdtreg = /((09|03|07|08|05)+([0-9]{8})\b)/;
 var datereg = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
@@ -27,7 +27,7 @@ const ScreenLogin = ({ navigation }) => {
   const [date, setDate] = useState("");
   const [pass, setPass] = useState("");
   const [isLoadding, setIsLoadding] = useState(false);
-
+  const password = true;
   const user = {
     name: name,
     sex: sex,
@@ -40,9 +40,10 @@ const ScreenLogin = ({ navigation }) => {
     password: pass,
     image:
       "https://static2.yan.vn/YanNews/2167221/202102/facebook-cap-nhat-avatar-doi-voi-tai-khoan-khong-su-dung-anh-dai-dien-e4abd14d.jpg",
-    background: "",
-    following: 0,
-    follower: 0,
+    background:
+      "https://img.meta.com.vn/Data/image/2022/02/07/mau-ghi-la-mau-gi-2.jpg",
+    following: [],
+    follower: [],
     type: "client",
   };
   const validate = () => {
@@ -205,6 +206,7 @@ const ScreenLogin = ({ navigation }) => {
                     placeholder="PassWord"
                     icon="key"
                     getText={setPass}
+                    password={true}
                   />
                 </View>
                 <View style={styles.containerbtn}>

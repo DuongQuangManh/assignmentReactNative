@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./style";
 import ItemListUser from "../../ItemListUser";
 
-var api_url = "http://192.168.1.14:3000/accounts";
+var api_url = require("../../../src/requestAPI").api_url;
 var API = require("../../../src/requestAPI");
 
 const ScreenListUser = ({ route }) => {
@@ -31,6 +31,7 @@ const ScreenListUser = ({ route }) => {
     console.log(a);
   };
 
+  const handlerShow = (id) => {};
   useEffect(() => {
     getAPI();
   }, []);
@@ -40,7 +41,7 @@ const ScreenListUser = ({ route }) => {
       <FlatList
         data={data}
         renderItem={({ item }) => {
-          return <ItemListUser item={item} />;
+          return <ItemListUser item={item} show={handlerShow} />;
         }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

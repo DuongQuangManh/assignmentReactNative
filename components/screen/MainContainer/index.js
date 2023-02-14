@@ -8,6 +8,7 @@ import ScreenNotification from "../../screen/ScreenNotification";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../../../contains/colors";
 import ScreenProfile from "../ScreenProfile";
+import ScreenSearch from "../ScreenSearch";
 
 const MainContainer = ({ navigation, route }) => {
   console.log(route.params.useID);
@@ -40,7 +41,13 @@ const MainContainer = ({ navigation, route }) => {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Home" component={ScreenHome} />
+        <Tab.Screen name="Home">
+          {(props) => {
+            return (
+              <ScreenHome {...props} stackNavigation={navigation} userID={id} />
+            );
+          }}
+        </Tab.Screen>
         <Tab.Screen name="Watch" component={ScreenWatch} />
         <Tab.Screen name="Notification" component={ScreenNotification} />
         <Tab.Screen name="ScreenProfile">

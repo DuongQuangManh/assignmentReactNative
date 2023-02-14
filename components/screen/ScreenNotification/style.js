@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
   },
   header: {
     width: "100%",
-    height: "10%",
+    height: 60,
     paddingStart: 10,
     backgroundColor: "white",
     paddingBottom: 5,

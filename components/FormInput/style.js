@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
   edt: {
-    width: "90%",
+    width: "95%",
     height: 45,
     flexDirection: "row",
     position: "relative",

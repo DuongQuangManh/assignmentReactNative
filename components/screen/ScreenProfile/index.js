@@ -8,13 +8,26 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import colors from "../../../contains/colors";
 import Hr from "../../Hr";
 import styles from "./style";
+var API = require("../../../src/requestAPI");
+var info = {
+  image:
+    "https://img6.thuthuatphanmem.vn/uploads/2022/11/18/anh-dang-loading-troll_093250951.jpg",
+  name: "",
+};
 const ScreenProfile = ({ stackNavigation, userID }) => {
   console.log("id client: " + userID);
   const id = userID;
+  const [acc, setAcc] = useState(info);
+
+  const getAPI = async () => {
+    const a = await API.getUserByID(id);
+    setAcc(a);
+  };
+
   const handlerLogOut = () => {
     return Alert.alert(
       "Logout",
@@ -36,6 +49,10 @@ const ScreenProfile = ({ stackNavigation, userID }) => {
       { cancelable: false }
     );
   };
+
+  useEffect(() => {
+    getAPI();
+  }, []);
   return (
     <View style={styles.container}>
       <StatusBar
@@ -68,7 +85,7 @@ const ScreenProfile = ({ stackNavigation, userID }) => {
                   ? {
                       uri: "https://img6.thuthuatphanmem.vn/uploads/2022/11/18/anh-dang-loading-troll_093250951.jpg",
                     }
-                  : require("../../../assets/avt.png")
+                  : { uri: acc.image }
               }
               style={{
                 width: 50,
@@ -84,7 +101,7 @@ const ScreenProfile = ({ stackNavigation, userID }) => {
                 marginStart: 10,
               }}
             >
-              {id.length === 0 ? "Chưa đăng nhập" : "Dương Quang Mạnh"}
+              {id.length === 0 ? "Chưa đăng nhập" : acc.name}
             </Text>
           </View>
         </TouchableOpacity>
@@ -93,7 +110,7 @@ const ScreenProfile = ({ stackNavigation, userID }) => {
           <Hr />
           <TouchableOpacity
             onPress={() => {
-              stackNavigation.navigate("ChangePass");
+              stackNavigation.navigate("ChangePass", { userID: id });
             }}
           >
             <View style={styles.chucnang}>
