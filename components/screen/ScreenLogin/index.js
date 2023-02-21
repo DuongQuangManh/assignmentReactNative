@@ -93,8 +93,31 @@ const ScreenLogin = ({ navigation }) => {
             ]
           );
         } else {
-          navigation.navigate("MainContainer", { useID: acc.id });
           setIsLoadding(false);
+          if (acc.lock === true) {
+            Alert.alert(
+              "Tài khoản của bạn đã bị khoá",
+              "Vui lòng liên hệ admin để biết thêm thông tin ?",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => {
+                    return null;
+                  },
+                },
+                {
+                  text: "Ok",
+                  onPress: () => {
+                    navigation.popToTop();
+                  },
+                },
+              ],
+              { cancelable: false }
+            );
+          } else {
+            navigation.navigate("MainContainer", { useID: acc.id });
+            setIsLoadding(false);
+          }
         }
       }
     }

@@ -60,7 +60,7 @@ const ScreenPost = ({ navigation, route }) => {
     const obj = {
       content: content,
       image: img_base64,
-      like: [],
+      likes: [],
       accountId: id,
     };
     fetch(API.api_urlpost, {

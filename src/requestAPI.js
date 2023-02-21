@@ -1,6 +1,7 @@
 // export var api_url = "http://10.24.11.18:3000/accounts";
 export var api_url = "http://192.168.137.87:3000/accounts";
 export var api_urlpost = "http://192.168.137.87:3000/posts";
+export var api_urlcmt = "http://192.168.137.87:3000/comments";
 // export var api_url = "http://10.24.42.93:3000/accounts";
 // export var api_urlpost = "http://10.24.42.93:3000/posts";
 
@@ -67,8 +68,37 @@ export function getUserByName(name) {
     });
 }
 
+export function getUserByNameNeAdmin(name) {
+  return fetch(api_url + "?name_like=" + name + "&?id_type=admin", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (posts) {
+      return posts;
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+}
+
 export function getAllPost() {
   return fetch(api_urlpost + "?_expand=account", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((json) => json)
+    .catch((e) => console.log(e));
+}
+export function getSoLuongCmt() {
+  return fetch(api_urlpost + "?_embeb=comments", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -125,4 +155,28 @@ export function getPostByArrID(arr) {
     .catch(function (error) {
       console.error(error);
     });
+}
+
+export function getAllUser() {
+  return fetch(api_url + "?type_ne=admin", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((json) => json)
+    .catch((e) => console.log(e));
+}
+
+export function getComment(id) {
+  return fetch(api_urlcmt + "?postId=" + id + "&_sort=id&_order=desc", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((json) => json)
+    .catch((e) => console.log(e));
 }

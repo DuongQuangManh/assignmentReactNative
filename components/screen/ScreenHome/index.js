@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import ItemPost from "../../ItemPost";
@@ -22,8 +23,14 @@ var ob = {
 const ScreenHome = ({ stackNavigation, userID }) => {
   const [data, setData] = useState([]);
   const [acc, setAcc] = useState(ob);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getAPI();
+  }, []);
   const AnimatedHeaderValue = new Animated.Value(0);
-  console.log(acc);
+
   const diffClamp = Animated.diffClamp(
     AnimatedHeaderValue,
     0,
@@ -67,9 +74,19 @@ const ScreenHome = ({ stackNavigation, userID }) => {
       });
   };
 
+  const handlerCmt = (item) => {
+    console.log(item);
+    stackNavigation.navigate("Comment", { cmt: item, uID: userID });
+  };
   const renderFlat = () => {
     return data.map((item, index) => (
-      <ItemPost item={item} key={index} actionLike={handlerLike} uID={userID} />
+      <ItemPost
+        item={item}
+        key={index}
+        actionLike={handlerLike}
+        uID={userID}
+        actionComment={handlerCmt}
+      />
     ));
   };
 
@@ -78,6 +95,7 @@ const ScreenHome = ({ stackNavigation, userID }) => {
     setData(a);
     const user = await API.getUserByID(userID);
     setAcc(user);
+    setRefreshing(false);
   };
 
   useEffect(() => {
@@ -159,6 +177,9 @@ const ScreenHome = ({ stackNavigation, userID }) => {
         </View>
       </Animated.View>
       <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         style={styles.containercontent}
         onScroll={(e) => {
           AnimatedHeaderValue.setValue(e.nativeEvent.contentOffset.y);

@@ -27,6 +27,7 @@ import ScreenShowPage from "./components/screen/ScreenShowPage";
 import ScreenEditProfile from "./components/screen/ScreenEditProfile";
 import ScreenPost from "./components/screen/ScreenPost";
 import ScreenManager from "./components/screen/ScreenManager";
+import ScreenComment from "./components/screen/ScreenComment";
 export default function App() {
   const Stack = createNativeStackNavigator();
   const backAction = () => {
@@ -111,6 +112,8 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="ScreenManager" component={ScreenManager} />
+
+        <Stack.Screen name="Comment" component={ScreenComment} />
       </Stack.Navigator>
     </NavigationContainer>
   );

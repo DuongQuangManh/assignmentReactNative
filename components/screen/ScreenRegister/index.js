@@ -27,7 +27,6 @@ const ScreenLogin = ({ navigation }) => {
   const [date, setDate] = useState("");
   const [pass, setPass] = useState("");
   const [isLoadding, setIsLoadding] = useState(false);
-  const password = true;
   const user = {
     name: name,
     sex: sex,
@@ -42,6 +41,7 @@ const ScreenLogin = ({ navigation }) => {
       "https://static2.yan.vn/YanNews/2167221/202102/facebook-cap-nhat-avatar-doi-voi-tai-khoan-khong-su-dung-anh-dai-dien-e4abd14d.jpg",
     background:
       "https://img.meta.com.vn/Data/image/2022/02/07/mau-ghi-la-mau-gi-2.jpg",
+    lock: false,
     following: [],
     follower: [],
     type: "client",

@@ -14,8 +14,12 @@ import Hr from "../Hr";
 
 var API = require("../../src/requestAPI");
 
-const ItemPost = ({ item, actionLike, uID }) => {
+const ItemPost = ({ item, actionLike, uID, actionComment }) => {
   const isLiked = item.likes.includes(uID);
+
+  const handlerCmt = () => {
+    actionComment(item);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -71,7 +75,7 @@ const ItemPost = ({ item, actionLike, uID }) => {
           )}
           <Text style={styles.textAction}>Like</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconcontainer}>
+        <TouchableOpacity style={styles.iconcontainer} onPress={handlerCmt}>
           <FontAwesome name="comment-o" size={24} color="black" />
           <Text style={styles.textAction}>Comment</Text>
         </TouchableOpacity>
