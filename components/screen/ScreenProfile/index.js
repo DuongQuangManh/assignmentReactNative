@@ -17,6 +17,7 @@ var info = {
   image:
     "https://img6.thuthuatphanmem.vn/uploads/2022/11/18/anh-dang-loading-troll_093250951.jpg",
   name: "",
+  type: "",
 };
 const ScreenProfile = ({ stackNavigation, userID }) => {
   console.log("id client: " + userID);
@@ -42,7 +43,7 @@ const ScreenProfile = ({ stackNavigation, userID }) => {
         {
           text: "Confirm",
           onPress: () => {
-            stackNavigation.replace("ScreenSplash");
+            stackNavigation.popToTop();
           },
         },
       ],
@@ -50,8 +51,36 @@ const ScreenProfile = ({ stackNavigation, userID }) => {
     );
   };
 
+  const handlerToPage = () => {
+    stackNavigation.navigate("Page", {
+      userID: id,
+    });
+  };
+  const handlerLogin = () => {
+    Alert.alert(
+      "Bạn chưa đăng nhập",
+      "Đăng nhập để đăng bài viết ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {
+            return null;
+          },
+        },
+        {
+          text: "Ok",
+          onPress: () => {
+            stackNavigation.popToTop();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
   useEffect(() => {
-    getAPI();
+    if (userID.length !== 0) {
+      getAPI();
+    }
   }, []);
   return (
     <View style={styles.container}>
@@ -66,16 +95,7 @@ const ScreenProfile = ({ stackNavigation, userID }) => {
         <Hr />
         <TouchableOpacity
           style={{ width: "100%" }}
-          onPress={() => {
-            stackNavigation.navigate(
-              id.length === 0 ? "ScreenLogin" : "Page",
-              id.length === 0
-                ? null
-                : {
-                    userID: id,
-                  }
-            );
-          }}
+          onPress={id.length === 0 ? handlerLogin : handlerToPage}
         >
           <View style={styles.page}>
             <Image
@@ -107,6 +127,19 @@ const ScreenProfile = ({ stackNavigation, userID }) => {
         </TouchableOpacity>
         <View style={styles.setting}>
           <Text style={styles.labelbody}>Setting</Text>
+          <Hr />
+          {acc.type === "admin" && (
+            <TouchableOpacity
+              onPress={() => {
+                stackNavigation.navigate("ScreenManager", { userID: id });
+              }}
+            >
+              <View style={styles.chucnang}>
+                <Text style={styles.label}>Quản lý người dùng</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+
           <Hr />
           <TouchableOpacity
             onPress={() => {

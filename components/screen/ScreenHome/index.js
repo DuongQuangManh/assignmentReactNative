@@ -6,24 +6,24 @@ import {
   Animated,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ItemPost from "../../ItemPost";
 import styles from "./style";
 import { Ionicons } from "@expo/vector-icons";
 
+var API = require("../../../src/requestAPI");
+var ob = {
+  image:
+    "https://img6.thuthuatphanmem.vn/uploads/2022/11/18/anh-dang-loading-troll_093250951.jpg",
+  type: "",
+};
 const ScreenHome = ({ stackNavigation, userID }) => {
-  const data = [
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-  ];
-
+  const [data, setData] = useState([]);
+  const [acc, setAcc] = useState(ob);
   const AnimatedHeaderValue = new Animated.Value(0);
+  console.log(acc);
   const diffClamp = Animated.diffClamp(
     AnimatedHeaderValue,
     0,
@@ -37,11 +37,97 @@ const ScreenHome = ({ stackNavigation, userID }) => {
   const handlerSearch = () => {
     stackNavigation.navigate("ScreenSearch", { uID: userID });
   };
+
+  const handlerLike = async (id) => {
+    console.log("đây là id bài viết được like: " + id);
+    console.log("Đây là người thích bài viết: " + userID);
+    API.getPostByID(id)
+      .then((a) => {
+        const isLike = a.likes.includes(userID);
+        return isLike === false
+          ? [...a.likes, userID]
+          : a.likes.filter((id) => id !== userID);
+      })
+      .then((like) => {
+        const obj = {
+          likes: like,
+        };
+        fetch(API.api_urlpost + "/" + id, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+        }).then((res) => {
+          if (res.status === 200) {
+            getAPI();
+          }
+        });
+      });
+  };
+
   const renderFlat = () => {
     return data.map((item, index) => (
-      <ItemPost iduser={item.name} idstatus={item.name} key={index} />
+      <ItemPost item={item} key={index} actionLike={handlerLike} uID={userID} />
     ));
   };
+
+  const getAPI = async () => {
+    const a = await API.getAllPost();
+    setData(a);
+    const user = await API.getUserByID(userID);
+    setAcc(user);
+  };
+
+  useEffect(() => {
+    const unsubscribe = stackNavigation.addListener("focus", () => {
+      getAPI();
+    });
+
+    return unsubscribe;
+  }, [stackNavigation]);
+
+  useEffect(() => {
+    getAPI();
+  }, []);
+  const handlerPost = () => {
+    if (acc.type === "admin") {
+      stackNavigation.navigate("ScreenPost", { uID: userID });
+    } else {
+      Alert.alert("Thông báo", "Chỉ admin với được đăng bài!", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => {} },
+      ]);
+    }
+  };
+
+  const handlerLogin = () => {
+    Alert.alert(
+      "Bạn chưa đăng nhập",
+      "Đăng nhập để đăng bài viết ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {
+            return null;
+          },
+        },
+        {
+          text: "Ok",
+          onPress: () => {
+            stackNavigation.popToTop();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View
       style={{
@@ -78,10 +164,17 @@ const ScreenHome = ({ stackNavigation, userID }) => {
           AnimatedHeaderValue.setValue(e.nativeEvent.contentOffset.y);
         }}
       >
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={userID.length === 0 ? handlerLogin : handlerPost}
+        >
           <View style={styles.poststatus}>
             <Image
-              source={require("../../../assets/avt.png")}
+              source={{
+                uri:
+                  userID.length === 0
+                    ? "https://img6.thuthuatphanmem.vn/uploads/2022/11/18/anh-dang-loading-troll_093250951.jpg"
+                    : acc.image,
+              }}
               style={{ width: 50, height: 50, borderRadius: 180 }}
             />
             <Text

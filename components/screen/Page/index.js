@@ -8,6 +8,7 @@ import {
   FlatList,
   Platform,
   RefreshControl,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import colors from "../../../contains/colors";
@@ -34,37 +35,29 @@ const Page = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [follower, setFler] = useState([]);
   const [following, setFling] = useState([]);
-
+  const [data, setData] = useState([]);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getUser();
+    getPost();
   }, []);
 
+  const getPost = async () => {
+    const a = await API.getAllPostByID(userID);
+    setData(a);
+    setRefreshing(false);
+  };
   const handlerShowFollower = () => {
     navigation.navigate("Danh sách", { uID: userID, type: "follower" });
   };
   const handlerShowFollowing = () => {
     navigation.navigate("Danh sách", { uID: userID, type: "following" });
   };
-
-  console.log("page: " + userID);
-  const data = [
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-  ];
-
   const getUser = async () => {
     const a = await API.getUserByID(userID);
     setAcc(a);
     setFler(a.follower);
     setFling(a.following);
-    console.log("đây là log acc" + a.follower.length);
-    setRefreshing(false);
   };
 
   const handlerEditProfile = () => {
@@ -72,14 +65,57 @@ const Page = ({ navigation, route }) => {
   };
   useEffect(() => {
     getUser();
+    getPost();
   }, []);
 
+  const handlerLike = async (id) => {
+    console.log("đây là id bài viết được like: " + id);
+    console.log("Đây là người thích bài viết: " + userID);
+    API.getPostByID(id)
+      .then((a) => {
+        const isLike = a.likes.includes(userID);
+        return isLike === false
+          ? [...a.likes, userID]
+          : a.likes.filter((id) => id !== userID);
+      })
+      .then((like) => {
+        const obj = {
+          likes: like,
+        };
+        fetch(API.api_urlpost + "/" + id, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+        }).then((res) => {
+          if (res.status === 200) {
+            getPost();
+          }
+        });
+      });
+  };
+
+  const handlerPost = () => {
+    if (acc.type === "admin") {
+      navigation.navigate("ScreenPost", { uID: userID });
+    } else {
+      Alert.alert("Thông báo", "Chỉ admin với được đăng bài!", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => {} },
+      ]);
+    }
+  };
   const renderFlat = () => {
     return data.map((item, index) => (
-      <ItemPost iduser={item.name} idstatus={item.name} key={index} />
+      <ItemPost item={item} key={index} actionLike={handlerLike} uID={userID} />
     ));
   };
-  console.log("abc");
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -163,7 +199,7 @@ const Page = ({ navigation, route }) => {
         <View style={styles.postandstatus}>
           <Hr />
           <Text style={styles.labelLarge}>Bài viết của bạn</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlerPost}>
             <View style={styles.poststatus}>
               <Text>Bạn đang nghĩ gì</Text>
             </View>

@@ -16,6 +16,7 @@ import ItemPost from "../../ItemPost";
 import { Ionicons } from "@expo/vector-icons";
 import ItemInfo from "../../ItemInfo";
 import { Entypo } from "@expo/vector-icons";
+import { SimpleLineIcons } from "@expo/vector-icons";
 
 var user = {
   image:
@@ -33,20 +34,77 @@ const ScreenShowPage = ({ navigation, route }) => {
   const idSearch = route.params.uIDSearch;
   const idUser = route.params.uIDUser;
 
-  console.log("idSearch" + idSearch);
-  console.log("idUser" + idUser);
-
   const [acc, setAcc] = useState(user);
   const [refreshing, setRefreshing] = useState(false);
   const [follower, setFler] = useState([]);
   const [following, setFling] = useState([]);
+  const [data, setData] = useState([]);
+  const [isFl, setFl] = useState();
 
+  const handlerFollow = async () => {
+    API.getUserByID(idSearch)
+      .then((a) => {
+        const isFollower = a.follower.includes(idUser);
+        return isFollower === false
+          ? [...a.follower, idUser]
+          : a.follower.filter((id) => id !== idUser);
+      })
+      .then((fl) => {
+        console.log(fl + "đây là mảng người follow");
+        const obj = {
+          follower: fl,
+        };
+        fetch(API.api_url + "/" + idSearch, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+        }).then((res) => {
+          if (res.status === 200) {
+            getUser();
+          }
+        });
+      });
+
+    API.getUserByID(idUser)
+      .then((a) => {
+        const isFollow = a.following.includes(idSearch);
+        return isFollow === false
+          ? [...a.following, idSearch]
+          : a.following.filter((id) => id !== idSearch);
+      })
+      .then((fl) => {
+        console.log(fl + "đây là mảng đã follow");
+        const obj = {
+          following: fl,
+        };
+        fetch(API.api_url + "/" + idUser, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+        }).then((res) => {
+          if (res.status === 200) {
+            getUser();
+            setFl(!isFl);
+          }
+        });
+      });
+  };
+
+  const getPost = async () => {
+    const a = await API.getAllPostByID(idSearch);
+    setData(a);
+    setRefreshing(false);
+  };
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getUser();
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
+    getPost();
   }, []);
 
   const handlerShowFollower = () => {
@@ -56,35 +114,53 @@ const ScreenShowPage = ({ navigation, route }) => {
     navigation.navigate("Danh sách", { uID: idSearch, type: "following" });
   };
 
-  console.log("page: " + idSearch);
-  const data = [
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-    { name: "abc" },
-  ];
-
   const getUser = async () => {
     const a = await API.getUserByID(idSearch);
     setAcc(a);
     setFler(a.follower);
     setFling(a.following);
-    console.log("đây là log acc" + a.follower.length);
+    setFl(a.follower.includes(idUser));
+  };
+
+  const handlerLike = async (id) => {
+    console.log("đây là id bài viết được like: " + id);
+    console.log("Đây là người thích bài viết: " + idUser);
+    API.getPostByID(id)
+      .then((a) => {
+        const isLike = a.likes.includes(idUser);
+        return isLike === false
+          ? [...a.likes, idUser]
+          : a.likes.filter((id) => id !== idUser);
+      })
+      .then((like) => {
+        const obj = {
+          likes: like,
+        };
+        fetch(API.api_urlpost + "/" + id, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+        }).then((res) => {
+          if (res.status === 200) {
+            getPost();
+          }
+        });
+      });
   };
 
   useEffect(() => {
     getUser();
+    getPost();
   }, []);
 
   const renderFlat = () => {
     return data.map((item, index) => (
-      <ItemPost iduser={item.name} idstatus={item.name} key={index} />
+      <ItemPost item={item} key={index} actionLike={handlerLike} uID={idUser} />
     ));
   };
-  console.log("abc");
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -127,10 +203,14 @@ const ScreenShowPage = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
           {idUser === idSearch ? null : (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handlerFollow}>
               <View style={styles.btnFl}>
-                {/* circle-with-minus */}
-                <ItemInfo icon="circle-with-plus" label="Theo dõi" content="" />
+                <SimpleLineIcons
+                  name={isFl === true ? "user-following" : "user-follow"}
+                  size={24}
+                  color="black"
+                />
+                <Text>{isFl === true ? "Đã theo dõi" : "Theo dõi"}</Text>
               </View>
             </TouchableOpacity>
           )}
@@ -167,23 +247,6 @@ const ScreenShowPage = ({ navigation, route }) => {
         <View style={styles.postandstatus}>
           <Hr />
           <Text style={styles.labelLarge}>Bài viết của bạn</Text>
-          <TouchableOpacity>
-            <View style={styles.poststatus}>
-              <Image
-                source={require("../../../assets/avt.png")}
-                style={{ width: 50, height: 50, borderRadius: 180 }}
-              />
-              <Text
-                style={{
-                  fontFamily: "Opensans",
-                  color: "gray",
-                  marginStart: 10,
-                }}
-              >
-                Bạn đang nghĩ gì
-              </Text>
-            </View>
-          </TouchableOpacity>
           <View
             style={{
               width: "100%",
@@ -266,6 +329,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
+    flexDirection: "row",
   },
   postandstatus: {
     width: "100%",

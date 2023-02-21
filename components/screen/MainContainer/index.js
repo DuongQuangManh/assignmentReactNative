@@ -26,7 +26,7 @@ const MainContainer = ({ navigation, route }) => {
               iconName = focused ? "home" : "home-outline";
             } else if (route.name === "Watch") {
               iconName = focused ? "desktop" : "desktop-outline";
-            } else if (route.name === "Notification") {
+            } else if (route.name === "Follow") {
               iconName = focused
                 ? "md-notifications"
                 : "md-notifications-outline";
@@ -49,7 +49,17 @@ const MainContainer = ({ navigation, route }) => {
           }}
         </Tab.Screen>
         <Tab.Screen name="Watch" component={ScreenWatch} />
-        <Tab.Screen name="Notification" component={ScreenNotification} />
+        <Tab.Screen name="Follow">
+          {(props) => {
+            return (
+              <ScreenNotification
+                {...props}
+                stackNavigation={navigation}
+                userID={id}
+              />
+            );
+          }}
+        </Tab.Screen>
         <Tab.Screen name="ScreenProfile">
           {(props) => {
             return (

@@ -25,6 +25,8 @@ import ScreenSearch from "./components/screen/ScreenSearch";
 import ScreenListUserSearch from "./components/screen/ScreenListUserSearch";
 import ScreenShowPage from "./components/screen/ScreenShowPage";
 import ScreenEditProfile from "./components/screen/ScreenEditProfile";
+import ScreenPost from "./components/screen/ScreenPost";
+import ScreenManager from "./components/screen/ScreenManager";
 export default function App() {
   const Stack = createNativeStackNavigator();
   const backAction = () => {
@@ -103,6 +105,12 @@ export default function App() {
           name="Chỉnh sửa trang cá nhân"
           component={ScreenEditProfile}
         />
+        <Stack.Screen
+          name="ScreenPost"
+          component={ScreenPost}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="ScreenManager" component={ScreenManager} />
       </Stack.Navigator>
     </NavigationContainer>
   );

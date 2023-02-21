@@ -1,72 +1,57 @@
 import { View, Text, FlatList } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./style";
 import colors from "../../../contains/colors";
 import ItemNotifi from "../../ItemNotifi";
+import ItemPost from "../../ItemPost";
 
-const ScreenNotification = () => {
-  const listNotification = [
-    {
-      name: "Dương Quang Mạnh",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "19 giờ",
-    },
-    {
-      name: "Lionel Messi",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "12 giờ",
-    },
-    {
-      name: "Lautaro Maztinez",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "7 giờ",
-    },
-    {
-      name: "Park Hang-seo",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "vừa xong",
-    },
-    {
-      name: "Dương Quang Mạnh",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "19 giờ",
-    },
-    {
-      name: "Lionel Messi",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "12 giờ",
-    },
-    {
-      name: "Lautaro Maztinez",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "7 giờ",
-    },
-    {
-      name: "Park Hang-seo",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "vừa xong",
-    },
-    {
-      name: "Dương Quang Mạnh",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "19 giờ",
-    },
-    {
-      name: "Lionel Messi",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "12 giờ",
-    },
-    {
-      name: "Lautaro Maztinez",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "7 giờ",
-    },
-    {
-      name: "Park Hang-seo",
-      content: "đã nhắc đến bạn trong một bình luận",
-      time: "vừa xong",
-    },
-  ];
+var API = require("../../../src/requestAPI");
+const ScreenNotification = ({ stackNavigation, userID }) => {
+  const [data, setData] = useState([]);
+
+  const getAPI = async () => {
+    console.log("A");
+    const user = await API.getUserByID(userID);
+    console.log(user);
+    const a = await API.getPostByArrID(user.following);
+    setData(a);
+  };
+
+  const handlerLike = async (id) => {
+    console.log("đây là id bài viết được like: " + id);
+    console.log("Đây là người thích bài viết: " + userID);
+    API.getPostByID(id)
+      .then((a) => {
+        const isLike = a.likes.includes(userID);
+        return isLike === false
+          ? [...a.likes, userID]
+          : a.likes.filter((id) => id !== userID);
+      })
+      .then((like) => {
+        const obj = {
+          likes: like,
+        };
+        fetch(API.api_urlpost + "/" + id, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+        }).then((res) => {
+          if (res.status === 200) {
+            getAPI();
+          }
+        });
+      });
+  };
+
+  useEffect(() => {
+    if (userID.length !== 0) {
+      getAPI();
+    }
+  }, []);
+
   return (
     <View
       style={[
@@ -85,20 +70,16 @@ const ScreenNotification = () => {
             fontFamily: "Opensans_Bold",
           }}
         >
-          Notification
+          Follow
         </Text>
       </View>
       <View style={styles.contents}>
         <FlatList
           style={{ color: colors.background }}
-          data={listNotification}
+          data={data}
           renderItem={({ item }) => {
             return (
-              <ItemNotifi
-                name={item.name}
-                content={item.content}
-                time={item.time}
-              />
+              <ItemPost item={item} actionLike={handlerLike} uID={userID} />
             );
           }}
         />
