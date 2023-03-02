@@ -24,38 +24,29 @@ const ScreenHome = ({ stackNavigation, userID }) => {
   const [data, setData] = useState([]);
   const [acc, setAcc] = useState(ob);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [isChange, setIsChange] = useState(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getAPI();
+    getUser();
   }, []);
-  const AnimatedHeaderValue = new Animated.Value(0);
-
-  const diffClamp = Animated.diffClamp(
-    AnimatedHeaderValue,
-    0,
-    Platform.OS === "ios" ? 270 : 70
-  );
-  const translateY = diffClamp.interpolate({
-    inputRange: [0, Platform.OS === "ios" ? 270 : 70],
-    outputRange: [0, Platform.OS === "ios" ? -270 : -70],
-  });
-
   const handlerSearch = () => {
     stackNavigation.navigate("ScreenSearch", { uID: userID });
   };
 
   const handlerLike = async (id) => {
-    console.log("đây là id bài viết được like: " + id);
-    console.log("Đây là người thích bài viết: " + userID);
     API.getPostByID(id)
       .then((a) => {
         const isLike = a.likes.includes(userID);
         return isLike === false
           ? [...a.likes, userID]
-          : a.likes.filter((id) => id !== userID);
+          : a.likes.filter((id) => {
+              return id !== userID;
+            });
       })
       .then((like) => {
+        console.log(like + "đây là mảng likes");
         const obj = {
           likes: like,
         };
@@ -68,7 +59,7 @@ const ScreenHome = ({ stackNavigation, userID }) => {
           body: JSON.stringify(obj),
         }).then((res) => {
           if (res.status === 200) {
-            getAPI();
+            setIsChange(!isChange);
           }
         });
       });
@@ -78,29 +69,22 @@ const ScreenHome = ({ stackNavigation, userID }) => {
     console.log(item);
     stackNavigation.navigate("Comment", { cmt: item, uID: userID });
   };
-  const renderFlat = () => {
-    return data.map((item, index) => (
-      <ItemPost
-        item={item}
-        key={index}
-        actionLike={handlerLike}
-        uID={userID}
-        actionComment={handlerCmt}
-      />
-    ));
-  };
 
   const getAPI = async () => {
     const a = await API.getAllPost();
     setData(a);
+    setRefreshing(false);
+  };
+
+  const getUser = async () => {
     const user = await API.getUserByID(userID);
     setAcc(user);
-    setRefreshing(false);
   };
 
   useEffect(() => {
     const unsubscribe = stackNavigation.addListener("focus", () => {
       getAPI();
+      getUser();
     });
 
     return unsubscribe;
@@ -108,7 +92,8 @@ const ScreenHome = ({ stackNavigation, userID }) => {
 
   useEffect(() => {
     getAPI();
-  }, []);
+    getUser();
+  }, [isChange]);
   const handlerPost = () => {
     if (acc.type === "admin") {
       stackNavigation.navigate("ScreenPost", { uID: userID });
@@ -154,19 +139,13 @@ const ScreenHome = ({ stackNavigation, userID }) => {
         backgroundColor: "white",
       }}
     >
-      <Animated.View
+      <View
         style={[
           {
             width: "100%",
             height: 70,
-            position: "absolute",
-            top: Platform.OS === "ios" ? 70 : 0,
-            right: 0,
-            left: 0,
-            elevation: 4,
             zIndex: 100,
           },
-          { transform: [{ translateY: translateY }] },
         ]}
       >
         <View style={styles.header}>
@@ -175,16 +154,6 @@ const ScreenHome = ({ stackNavigation, userID }) => {
             <Ionicons name="search" size={24} color="black" />
           </TouchableOpacity>
         </View>
-      </Animated.View>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        style={styles.containercontent}
-        onScroll={(e) => {
-          AnimatedHeaderValue.setValue(e.nativeEvent.contentOffset.y);
-        }}
-      >
         <TouchableOpacity
           onPress={userID.length === 0 ? handlerLogin : handlerPost}
         >
@@ -209,8 +178,25 @@ const ScreenHome = ({ stackNavigation, userID }) => {
             </Text>
           </View>
         </TouchableOpacity>
-        {renderFlat()}
-      </ScrollView>
+      </View>
+      <View style={styles.containercontent}>
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          data={data}
+          renderItem={({ item }) => {
+            return (
+              <ItemPost
+                item={item}
+                actionLike={handlerLike}
+                uID={userID}
+                actionComment={handlerCmt}
+              />
+            );
+          }}
+        />
+      </View>
     </View>
   );
 };

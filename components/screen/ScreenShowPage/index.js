@@ -40,6 +40,7 @@ const ScreenShowPage = ({ navigation, route }) => {
   const [following, setFling] = useState([]);
   const [data, setData] = useState([]);
   const [isFl, setFl] = useState();
+  const [isChange, setIsChange] = useState(false);
 
   const handlerFollow = async () => {
     API.getUserByID(idSearch)
@@ -145,7 +146,7 @@ const ScreenShowPage = ({ navigation, route }) => {
           body: JSON.stringify(obj),
         }).then((res) => {
           if (res.status === 200) {
-            getPost();
+            setIsChange(!isChange);
           }
         });
       });
@@ -154,7 +155,7 @@ const ScreenShowPage = ({ navigation, route }) => {
   useEffect(() => {
     getUser();
     getPost();
-  }, []);
+  }, [isChange]);
 
   const renderFlat = () => {
     return data.map((item, index) => (

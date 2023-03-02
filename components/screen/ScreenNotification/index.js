@@ -8,6 +8,7 @@ import ItemPost from "../../ItemPost";
 var API = require("../../../src/requestAPI");
 const ScreenNotification = ({ stackNavigation, userID }) => {
   const [data, setData] = useState([]);
+  const [isChange, setIsChange] = useState(false);
 
   const getAPI = async () => {
     console.log("A");
@@ -40,7 +41,7 @@ const ScreenNotification = ({ stackNavigation, userID }) => {
           body: JSON.stringify(obj),
         }).then((res) => {
           if (res.status === 200) {
-            getAPI();
+            setIsChange(!isChange);
           }
         });
       });
@@ -50,7 +51,7 @@ const ScreenNotification = ({ stackNavigation, userID }) => {
     if (userID.length !== 0) {
       getAPI();
     }
-  }, []);
+  }, [isChange]);
 
   return (
     <View

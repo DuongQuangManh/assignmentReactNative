@@ -49,18 +49,18 @@ const ScreenLogin = ({ navigation }) => {
   const validate = () => {
     if (
       (name.length === 0,
-      email.length === 0,
-      sex.length === 0,
-      date.length === 0,
-      pass.length === 0)
+        email.length === 0,
+        sex.length === 0,
+        date.length === 0,
+        pass.length === 0)
     ) {
       Alert.alert("Lỗi", "Vui lòng nhập đầy đủ thông tin !", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
           style: "cancel",
         },
-        { text: "OK", onPress: () => {} },
+        { text: "OK", onPress: () => { } },
       ]);
       return false;
     } else {
@@ -68,40 +68,40 @@ const ScreenLogin = ({ navigation }) => {
         Alert.alert("Lỗi", "Email hoặc số điện thoại không hợp lệ !", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
             style: "cancel",
           },
-          { text: "OK", onPress: () => {} },
+          { text: "OK", onPress: () => { } },
         ]);
         return false;
       } else if (datereg.test(date) === false) {
         Alert.alert("Lỗi", "Ngày sinh không hợp lệ !", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
             style: "cancel",
           },
-          { text: "OK", onPress: () => {} },
+          { text: "OK", onPress: () => { } },
         ]);
         return false;
       } else if (pass.length < 8) {
         Alert.alert("Lỗi", "Password phải nhiều hơn hoặc bằng 8 kí tự !", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
             style: "cancel",
           },
-          { text: "OK", onPress: () => {} },
+          { text: "OK", onPress: () => { } },
         ]);
         return false;
       } else if (name.length <= 2 && name.length >= 50) {
         Alert.alert("Lỗi", "Vui lòng nhập chính xác họ tên!", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
             style: "cancel",
           },
-          { text: "OK", onPress: () => {} },
+          { text: "OK", onPress: () => { } },
         ]);
         return false;
       } else {
@@ -141,7 +141,7 @@ const ScreenLogin = ({ navigation }) => {
       } else {
         setIsLoadding(false);
         Alert.alert("Thông báo", "Email or số điện thoại đã tồn tại !", [
-          { text: "OK", onPress: () => {} },
+          { text: "OK", onPress: () => { } },
         ]);
       }
     }

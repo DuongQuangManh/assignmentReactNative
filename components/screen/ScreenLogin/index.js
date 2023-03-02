@@ -69,7 +69,6 @@ const ScreenLogin = ({ navigation }) => {
     if (validatte() === true) {
       setIsLoadding(true);
       var acc = await API.getUserByEmail(email);
-      console.log(acc);
       if (acc === undefined) {
         setIsLoadding(false);
         Alert.alert(

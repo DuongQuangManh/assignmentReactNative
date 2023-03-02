@@ -36,6 +36,8 @@ const Page = ({ navigation, route }) => {
   const [follower, setFler] = useState([]);
   const [following, setFling] = useState([]);
   const [data, setData] = useState([]);
+  const [isChange, setIsChange] = useState(false);
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getUser();
@@ -66,7 +68,7 @@ const Page = ({ navigation, route }) => {
   useEffect(() => {
     getUser();
     getPost();
-  }, []);
+  }, [isChange]);
 
   const handlerLike = async (id) => {
     console.log("đây là id bài viết được like: " + id);
@@ -91,7 +93,7 @@ const Page = ({ navigation, route }) => {
           body: JSON.stringify(obj),
         }).then((res) => {
           if (res.status === 200) {
-            getPost();
+            setIsChange(!isChange);
           }
         });
       });

@@ -1,7 +1,7 @@
 // export var api_url = "http://10.24.11.18:3000/accounts";
-export var api_url = "http://192.168.137.87:3000/accounts";
-export var api_urlpost = "http://192.168.137.87:3000/posts";
-export var api_urlcmt = "http://192.168.137.87:3000/comments";
+export var api_url = "http://192.168.1.14:3000/accounts";
+export var api_urlpost = "http://192.168.1.14:3000/posts";
+export var api_urlcmt = "http://192.168.1.14:3000/comments";
 // export var api_url = "http://10.24.42.93:3000/accounts";
 // export var api_urlpost = "http://10.24.42.93:3000/posts";
 
@@ -97,6 +97,19 @@ export function getAllPost() {
     .then((json) => json)
     .catch((e) => console.log(e));
 }
+
+export function getAllLikeFromPost(id) {
+  return fetch(api_urlpost + "/" + id, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((json) => json[0].likes)
+    .catch((e) => console.log(e));
+}
+
 export function getSoLuongCmt() {
   return fetch(api_urlpost + "?_embeb=comments", {
     method: "GET",
