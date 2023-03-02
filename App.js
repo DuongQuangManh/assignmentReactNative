@@ -28,6 +28,8 @@ import ScreenEditProfile from "./components/screen/ScreenEditProfile";
 import ScreenPost from "./components/screen/ScreenPost";
 import ScreenManager from "./components/screen/ScreenManager";
 import ScreenComment from "./components/screen/ScreenComment";
+
+//SanPhamBy: DuongQuangManh (test git)
 export default function App() {
   const Stack = createNativeStackNavigator();
   const backAction = () => {
